@@ -1,0 +1,13 @@
+# Base image with the .NET 8 SDK (needed for dotnet watch).
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+# Set up a working directory in the container.
+WORKDIR /app
+COPY . /app
+
+# Expose port 5000 for the Squidex backend.
+EXPOSE 5000
+EXPOSE 5004
+
+# By default, run with hot reload on port 5000.
+CMD ["dotnet", "watch", "run", "--project", "backend/src/Squidex/Squidex.csproj", "--urls", "http://0.0.0.0:5000"]

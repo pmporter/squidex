@@ -75,7 +75,8 @@ public static class Startup
             // Forward requests to SPA development server.
             app.UseSpa(builder =>
             {
-                builder.UseProxyToSpaDevelopmentServer("https://localhost:3000");
+                //builder.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                builder.UseProxyToSpaDevelopmentServer("http://squidex_frontend:3000");
             });
         }
     }

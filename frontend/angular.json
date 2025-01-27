@@ -150,7 +150,8 @@
           },
           "options": {
             "port": 3000,
-            "ssl": true,
+            "host": "0.0.0.0",
+            "ssl": false,
             "sslCert": "./../dev/squidex-dev.crt",
             "sslKey": "./../dev/squidex-dev.key"
           },

@@ -1,0 +1,61 @@
+services:
+  squidex_backend:
+    # Path to the Dockerfile for the backend.
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5000:5000"
+      - "5004:5004"
+    depends_on:
+      - squidex_mongo
+    # Mount your entire repo (or just the backend folder) into /app in the container.
+    volumes:
+      - .:/app
+    networks:
+      - internal
+    environment:
+      - URLS__BASEURL=http://${SQUIDEX_DOMAIN}
+      - EVENTSTORE__TYPE=MongoDB
+      - EVENTSTORE__MONGODB__CONFIGURATION=mongodb://squidex_mongo
+      - STORE__MONGODB__CONFIGURATION=mongodb://squidex_mongo
+      - IDENTITY__ADMINEMAIL=${SQUIDEX_ADMINEMAIL}
+      - IDENTITY__ADMINPASSWORD=${SQUIDEX_ADMINPASSWORD}
+      - IDENTITY__GOOGLECLIENT=${SQUIDEX_GOOGLECLIENT}
+      - IDENTITY__GOOGLESECRET=${SQUIDEX_GOOGLESECRET}
+      - IDENTITY__GITHUBCLIENT=${SQUIDEX_GITHUBCLIENT}
+      - IDENTITY__GITHUBSECRET=${SQUIDEX_GITHUBSECRET}
+      - IDENTITY__MICROSOFTCLIENT=${SQUIDEX_MICROSOFTCLIENT}
+      - IDENTITY__MICROSOFTSECRET=${SQUIDEX_MICROSOFTSECRET}
+
+  squidex_frontend:
+    # Path to the Dockerfile for the frontend.
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    networks:
+      - internal
+    ports:
+      - "3000:3000"
+    # Bind mount the frontend folder so code changes are picked up.
+    volumes:
+      - ./:/app
+      - /app/frontend/node_modules
+
+  squidex_mongo:
+    image: ecccontainers.azurecr.io/mongo:latest
+    ports:
+      - "27017:27017"
+    command: mongod --port 27017 --bind_ip_all
+    volumes:
+      - /etc/squidex/mongo/db:/data/db
+    networks:
+      - internal
+    restart: always
+
+volumes:
+  mongo_data:
+
+networks:
+  internal:
+    driver: bridge
